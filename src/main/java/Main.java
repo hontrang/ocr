@@ -5,7 +5,7 @@ import java.awt.*;
 import java.io.IOException;
 
 public class Main {
-    private static final String CREDENTIALS_FILE_PATH = System.getProperty("user.dir") + java.io.File.separator + "icauto_asics.json";
+    private static final String CREDENTIALS_FILE_PATH = "icauto_asics.json";
 
     public static void main(String[] args) throws IOException, AWTException {
         FileUtility fileUtility = new FileUtility();
