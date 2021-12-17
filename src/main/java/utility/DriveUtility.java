@@ -38,6 +38,7 @@ public class DriveUtility {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_FILE);
     private static HttpTransport HTTP_TRANSPORT;
+    private static String fileId = null;
 
     static {
         try {
@@ -137,12 +138,22 @@ public class DriveUtility {
         return result.getFiles();
     }
 
+    private String getIdFromFileName(String fileName) throws IOException {
+        List<File> list = getListFile();
+        for(File f: list){
+            if (f.getName().equals(fileName)) return f.getId();
+        }
+        return null;
+    }
+
     public void delete(String id) throws IOException {
         service.files().delete(id).execute();
     }
 
-    // Todo: implement later
-    public void updateFile(String fileId, String fileName, String filePath, String fileType) throws IOException {
+    public void updateFile(String fileName, String filePath, String fileType) throws IOException {
+        if (fileId == null){
+            fileId = getIdFromFileName(fileName);
+        }
         java.io.File path = new java.io.File(filePath);
         File file = new File();
         file.setName(fileName);

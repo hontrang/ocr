@@ -8,14 +8,29 @@ import java.io.IOException;
 
 public class Main {
     private static final String CREDENTIALS_FILE_PATH = "icauto_asics.json";
-    private static final String FILE_ID = "1YPBoXauUR62O8QhENyBSRvwj9p_xOYXj";
+
     public static void main(String[] args) throws IOException, AWTException {
+        int x;
+        int y;
+        int width;
+        int height;
+        if (args.length > 0) {
+            x = Integer.valueOf(args[0]);
+            y = Integer.valueOf(args[1]);
+            width = Integer.valueOf(args[2]);
+            height = Integer.valueOf(args[3]);
+        } else {
+            x = 70;
+            y = 70;
+            width = 600;
+            height = 200;
+        }
         FileUtility fileUtility = new FileUtility();
         while (true) {
-            CaptureScreenUtility.captureScreen();
+            CaptureScreenUtility.captureScreen(x, y, width, height);
             fileUtility.writeFile("code.txt", OCRUtility.doOCR());
             DriveUtility drive = new DriveUtility(CREDENTIALS_FILE_PATH);
-            drive.updateFile(FILE_ID, "code.txt", System.getProperty("user.dir") + java.io.File.separator + "code.txt", "*/*");
+            drive.updateFile("code.txt", System.getProperty("user.dir") + java.io.File.separator + "code.txt", "*/*");
             sleep(2000);
         }
     }
