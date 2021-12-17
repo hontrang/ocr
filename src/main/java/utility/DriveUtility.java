@@ -1,4 +1,5 @@
 package utility;// Copyright 2018 Google LLC
+
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,6 +38,7 @@ public class DriveUtility {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_FILE);
     private static HttpTransport HTTP_TRANSPORT;
+    private static String fileId = null;
 
     static {
         try {
@@ -68,9 +70,11 @@ public class DriveUtility {
     }
 
     /**
-     * At first time, gmail will display consent window to ask for authorize then store creadential binary file
+     * At first time, gmail will display consent window to ask for authorize then
+     * store creadential binary file
      * to folder ${Project_directory}/credentials/{Credential_json_fileName}
-     * Please authorize and commit to automation source for skip step authorize next run
+     * Please authorize and commit to automation source for skip step authorize next
+     * run
      *
      * @param credentialJson
      * @return
@@ -78,7 +82,8 @@ public class DriveUtility {
     private String configStorePath(String credentialJson) {
         credentialJson = credentialJson.replace(".json", "");
         String folderName = credentialJson.substring(credentialJson.lastIndexOf("\\") + 1);
-        return System.getProperty("user.dir") + java.io.File.separator + "credentials" + java.io.File.separator + folderName;
+        return System.getProperty("user.dir") + java.io.File.separator + "credentials" + java.io.File.separator
+                + folderName;
     }
 
     private Credential authorize() throws IOException {
@@ -89,8 +94,8 @@ public class DriveUtility {
         java.io.File data_store_dir = new java.io.File(getStorePath());
         FileDataStoreFactory data_store_factory = new FileDataStoreFactory(data_store_dir);
         // Build flow and trigger user authorization request.
-        GoogleAuthorizationCodeFlow flow =
-                new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY,
+                clientSecrets, SCOPES)
                         .setDataStoreFactory(data_store_factory)
                         .setAccessType("offline")
                         .build();
@@ -133,14 +138,26 @@ public class DriveUtility {
         return result.getFiles();
     }
 
+    private String getIdFromFileName(String fileName) throws IOException {
+        List<File> list = getListFile();
+        for(File f: list){
+            if (f.getName().equals(fileName)) return f.getId();
+        }
+        return null;
+    }
+
     public void delete(String id) throws IOException {
         service.files().delete(id).execute();
     }
 
-    //Todo: implement later
-    public void download(String fileId) throws IOException {
-        OutputStream outputStream = new ByteArrayOutputStream();
-        service.files().get(fileId)
-                .executeMediaAndDownloadTo(outputStream);
+    public void updateFile(String fileName, String filePath, String fileType) throws IOException {
+        if (fileId == null){
+            fileId = getIdFromFileName(fileName);
+        }
+        java.io.File path = new java.io.File(filePath);
+        File file = new File();
+        file.setName(fileName);
+        FileContent mediaContent = new FileContent(fileType, path);
+        service.files().update(fileId, file, mediaContent).execute();
     }
 }
