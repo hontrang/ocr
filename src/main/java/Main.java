@@ -10,22 +10,21 @@ public class Main {
     private static final String CREDENTIALS_FILE_PATH = "icauto_asics.json";
 
     public static void main(String[] args) throws IOException, AWTException {
-        int x;
-        int y;
-        int width;
-        int height;
-        if (args.length > 0) {
-            x = Integer.valueOf(args[0]);
-            y = Integer.valueOf(args[1]);
-            width = Integer.valueOf(args[2]);
-            height = Integer.valueOf(args[3]);
-        } else {
-            x = 70;
-            y = 70;
-            width = 600;
-            height = 200;
-        }
+        int x = 0;
+        int y = 0;
+        int width = 600;
+        int height = 200;
+        String arg;
         FileUtility fileUtility = new FileUtility();
+        for (int i = 0; i < args.length; i++) {
+            arg = args[i];
+            if (arg.equals("--resolution") || arg.equals("-r")) {
+                x = Integer.valueOf(args[i + 1]);
+                y = Integer.valueOf(args[i + 2]);
+                width = Integer.valueOf(args[i + 3]);
+                height = Integer.valueOf(args[i + 4]);
+            }
+        }
         while (true) {
             CaptureScreenUtility.captureScreen(x, y, width, height);
             fileUtility.writeFile("code.txt", OCRUtility.doOCR());
