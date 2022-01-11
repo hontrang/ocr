@@ -5,11 +5,13 @@ import utility.OCRUtility;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 public class Main {
     private static final String CREDENTIALS_FILE_PATH = "icauto_asics.json";
 
     public static void main(String[] args) throws IOException, AWTException {
+        DriveUtility drive;
         int x = 0;
         int y = 0;
         int width = 600;
@@ -28,8 +30,12 @@ public class Main {
         while (true) {
             CaptureScreenUtility.captureScreen(x, y, width, height);
             fileUtility.writeFile("code.txt", OCRUtility.doOCR());
-            DriveUtility drive = new DriveUtility(CREDENTIALS_FILE_PATH);
-            drive.updateFile("code.txt", System.getProperty("user.dir") + java.io.File.separator + "code.txt", "*/*");
+            drive = new DriveUtility(CREDENTIALS_FILE_PATH);
+            try {
+                drive.updateFile("code.txt", System.getProperty("user.dir") + java.io.File.separator + "code.txt", "text/plain text");
+            } catch (SocketTimeoutException e) {
+                e.printStackTrace();
+            }
             sleep(2000);
         }
     }
