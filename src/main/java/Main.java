@@ -3,8 +3,11 @@ import utility.DriveUtility;
 import utility.FileUtility;
 import utility.OCRUtility;
 
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 import java.awt.*;
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 public class Main {
@@ -33,7 +36,7 @@ public class Main {
             drive = new DriveUtility(CREDENTIALS_FILE_PATH);
             try {
                 drive.updateFile("code.txt", System.getProperty("user.dir") + java.io.File.separator + "code.txt", "text/plain text");
-            } catch (SocketTimeoutException e) {
+            } catch (SocketTimeoutException | SSLException | SocketException e) {
                 e.printStackTrace();
             }
             sleep(2000);
