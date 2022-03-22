@@ -151,7 +151,10 @@ public class DriveUtility {
     }
 
     public void updateFile(String fileName, String filePath, String fileType) throws IOException {
-        if (fileId == null){
+        if (getIdFromFileName(fileName) == null) {
+            upload(fileName, filePath, fileType);
+        }
+        if (fileId == null) {
             fileId = getIdFromFileName(fileName);
         }
         java.io.File path = new java.io.File(filePath);
