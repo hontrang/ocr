@@ -9,14 +9,16 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.time.LocalDateTime;
 
 
 public class Main {
+    private static String code = "";
 
     public static void main(String[] args) throws IOException, AWTException {
         String credentialsFilePath = "icauto_asics.json";
         String fileName = "code.txt";
-        String code = "";
+
         FileUtility fileUtility = new FileUtility();
 
         int x = 0;
@@ -45,12 +47,12 @@ public class Main {
         }
         while (true) {
             if (scanUntilImageChanged(fileName, screenshot, x, y, width, height)) {
-                code = OCRUtility.doOCR(screenshot);
+                System.out.println(LocalDateTime.now() + " start upload file");
                 fileUtility.writeFile(fileName, code);
                 pushFileToGoogleDrive(credentialsFilePath, fileName);
-                sleep(29000);
+                System.out.println(LocalDateTime.now() + " end upload file");
+                sleep(20000);
             }
-
         }
     }
 
@@ -81,12 +83,12 @@ public class Main {
     }
 
     private static boolean scanUntilImageChanged(String fileName, String screenshot, int x, int y, int width, int height) throws IOException, AWTException {
-        String code = OCRUtility.doOCR(screenshot);
         String currentCode = getFirstLine(fileName);
+        code = OCRUtility.doOCR(screenshot);
         while (code.equals(currentCode)) {
             CaptureScreenUtility.captureScreen(x, y, width, height, screenshot);
             code = OCRUtility.doOCR(screenshot);
-            sleep(100);
+            sleep(200);
         }
         return true;
     }
