@@ -23,18 +23,7 @@ jobs:
 
     - name: Build with Maven
       run: mvn clean package
-    
-    - name: Check if tag exists
-      id: check_tag
-      run: |
-        tag_name="${GITHUB_REF#refs/tags/}"
-        if git rev-parse "refs/tags/$tag_name" >/dev/null 2>&1; then
-          echo "Tag already exists"
-          echo "::set-output name=tag_exists::true"
-        else
-          echo "Tag does not exist"
-          echo "::set-output name=tag_exists::false"
-        fi
+
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
