@@ -32,3 +32,8 @@ jobs:
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
+         with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target
+          asset_name: ocr-1.0-SNAPSHOT-jar-with-dependencies.jar
+          asset_content_type: application/java-archive
