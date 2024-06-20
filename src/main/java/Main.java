@@ -16,7 +16,7 @@ public class Main {
     private static String code = "";
 
     public static void main(String[] args) throws IOException, AWTException {
-        String credentialsFilePath = "icauto_asics.json";
+        String credentialsFilePath = "credentials.json";
         String fileName = "code.txt";
 
         FileUtility fileUtility = new FileUtility();
