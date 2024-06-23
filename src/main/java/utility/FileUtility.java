@@ -74,14 +74,8 @@ public class FileUtility {
         File fromFile = new File(from);
         File toFile = new File(to);
 
-        if (!fromFile.exists()) {
-            throw new IOException("File not found: " + from);
-        }
-        if (!fromFile.isFile()) {
-            throw new IOException("Cannot copy directories: " + from);
-        }
-        if (!fromFile.canRead()) {
-            throw new IOException("Cannot read file: " + from);
+        if (!fromFile.exists() || !fromFile.isFile() || !fromFile.canRead()) {
+            throw new IOException("Uneligible file: " + from);
         }
 
         if (toFile.isDirectory()) {
@@ -96,14 +90,8 @@ public class FileUtility {
                 parent = System.getProperty("user.dir");
             }
             File dir = new File(parent);
-            if (!dir.exists()) {
-                throw new IOException("Destination directory does not exist: " + parent);
-            }
-            if (dir.isFile()) {
-                throw new IOException("Destination is not a valid directory: " + parent);
-            }
-            if (!dir.canWrite()) {
-                throw new IOException("Cannot write to destination: " + parent);
+            if (!dir.exists() || dir.isFile() || !dir.canWrite()) {
+                throw new IOException("Uneligible file " + parent);
             }
         }
 

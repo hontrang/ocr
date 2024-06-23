@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 public class Main {
     private static String code = "";
-    private static boolean KEEP_RUNNING = true;
+    private static final boolean KEEP_RUNNING = true;
 
     public static void main(String[] args) throws IOException, AWTException {
         String credentialsFilePath = "credentials.json";
