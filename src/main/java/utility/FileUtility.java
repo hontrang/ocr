@@ -24,8 +24,6 @@ public class FileUtility {
             try {
                 while ((line = br.readLine()) != null)
                     lines.add(line);
-                fr.close();
-                br.close();
             } catch (IOException ioex) {
             }
 
@@ -40,8 +38,6 @@ public class FileUtility {
                 BufferedWriter bw = new BufferedWriter(fw);) {
             for (String shipment : lines)
                 bw.write(shipment);
-            bw.flush();
-            bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,7 +49,6 @@ public class FileUtility {
             file = new File(path);
             for (String str : content)
                 bw.write(str);
-            bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
