@@ -70,77 +70,54 @@ public class FileUtility {
     }
 
 
-    public void copyFile(String from, String to, Boolean overwrite) {
+    public void copyFile(String from, String to, boolean overwrite) throws IOException {
+        File fromFile = new File(from);
+        File toFile = new File(to);
 
-        try {
-            File fromFile = new File(from);
-            File toFile = new File(to);
+        if (!fromFile.exists()) {
+            throw new IOException("File not found: " + from);
+        }
+        if (!fromFile.isFile()) {
+            throw new IOException("Cannot copy directories: " + from);
+        }
+        if (!fromFile.canRead()) {
+            throw new IOException("Cannot read file: " + from);
+        }
 
-            if (!fromFile.exists()) {
-                throw new IOException("File not found: " + from);
+        if (toFile.isDirectory()) {
+            toFile = new File(toFile, fromFile.getName());
+        }
+
+        if (toFile.exists() && !overwrite) {
+            throw new IOException("File already exists: " + toFile.getPath());
+        } else {
+            String parent = toFile.getParent();
+            if (parent == null) {
+                parent = System.getProperty("user.dir");
             }
-            if (!fromFile.isFile()) {
-                throw new IOException("Can't copy directories: " + from);
+            File dir = new File(parent);
+            if (!dir.exists()) {
+                throw new IOException("Destination directory does not exist: " + parent);
             }
-            if (!fromFile.canRead()) {
-                throw new IOException("Can't read file: " + from);
+            if (dir.isFile()) {
+                throw new IOException("Destination is not a valid directory: " + parent);
             }
-
-            if (toFile.isDirectory()) {
-                toFile = new File(toFile, fromFile.getName());
+            if (!dir.canWrite()) {
+                throw new IOException("Cannot write to destination: " + parent);
             }
+        }
 
-            if (toFile.exists() && !overwrite) {
-                throw new IOException("File already exists.");
-            } else {
-                String parent = toFile.getParent();
-                if (parent == null) {
-                    parent = System.getProperty("user.dir");
-                }
-                File dir = new File(parent);
-                if (!dir.exists()) {
-                    throw new IOException("Destination directory does not exist: " + parent);
-                }
-                if (dir.isFile()) {
-                    throw new IOException("Destination is not a valid directory: " + parent);
-                }
-                if (!dir.canWrite()) {
-                    throw new IOException("Can't write on destination: " + parent);
-                }
+        try (FileInputStream fis = new FileInputStream(fromFile);
+             FileOutputStream fos = new FileOutputStream(toFile)) {
+             
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
             }
-
-            FileInputStream fis = null;
-            FileOutputStream fos = null;
-            try {
-
-                fis = new FileInputStream(fromFile);
-                fos = new FileOutputStream(toFile);
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-
-                while ((bytesRead = fis.read(buffer)) != -1) {
-                    fos.write(buffer, 0, bytesRead);
-                }
-
-            } finally {
-                if (from != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        e.getMessage();
-                    }
-                }
-                if (to != null) {
-                    try {
-                        fos.close();
-                    } catch (IOException e) {
-                        e.getMessage();
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            System.out.println("Problems when copying file.");
+        } catch (IOException e) {
+            throw new IOException("Error occurred while copying file: " + e.getMessage(), e);
         }
     }
 
