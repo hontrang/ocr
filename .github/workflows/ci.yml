@@ -4,8 +4,9 @@
 name: Build project
 
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - master
 
 jobs:
   build:
@@ -52,8 +53,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.run_number }}
-        release_name: Release ${{ github.run_number }}
+        tag_name: ${{ env.CURRENT_TAG }}
+        release_name: Release ${{ env.CURRENT_TAG }}
         draft: false
         prerelease: false
 
