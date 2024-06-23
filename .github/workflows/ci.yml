@@ -47,6 +47,12 @@ jobs:
     - name: Build with Maven
       run: mvn clean package
 
+    - name: Get the current tag
+      id: get_tag
+      run: |
+        current_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+        echo "CURRENT_TAG=$current_tag" >> $GITHUB_ENV
+
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
