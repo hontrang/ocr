@@ -12,14 +12,11 @@ import java.util.List;
 public class FileUtility {
     private File file;
     private String line = null;
-    private FileWriter fw;
-    private BufferedWriter bw;
     private FileReader fr;
     private BufferedReader br;
-    private PrintWriter pw;
 
     public List<String> readFile(String filePath) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         try {
             file = new File(filePath);
             fr = new FileReader(file);
@@ -39,9 +36,8 @@ public class FileUtility {
 
     public void writeFile(String filePath, String... lines) {
         file = new File(filePath);
-        try {
-            fw = new FileWriter(file);
-            bw = new BufferedWriter(fw);
+        try (FileWriter fw = new FileWriter(file);
+                BufferedWriter bw = new BufferedWriter(fw);) {
             for (String shipment : lines)
                 bw.write(shipment);
             bw.flush();
@@ -52,10 +48,9 @@ public class FileUtility {
     }
 
     public void write(String path, String... content) {
-        try {
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(file), StandardCharsets.UTF_8));) {
             file = new File(path);
-            bw = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(file), StandardCharsets.UTF_8));
             for (String str : content)
                 bw.write(str);
             bw.close();
@@ -68,7 +63,6 @@ public class FileUtility {
         File file = new File(filePath);
         return file.exists();
     }
-
 
     public void copyFile(String from, String to, boolean overwrite) throws IOException {
         File fromFile = new File(from);
@@ -96,8 +90,8 @@ public class FileUtility {
         }
 
         try (FileInputStream fis = new FileInputStream(fromFile);
-             FileOutputStream fos = new FileOutputStream(toFile)) {
-             
+                FileOutputStream fos = new FileOutputStream(toFile)) {
+
             byte[] buffer = new byte[4096];
             int bytesRead;
 
@@ -131,7 +125,6 @@ public class FileUtility {
                 }
             }
         }
-
     }
 
     public void createFolder(File folder) {
@@ -141,21 +134,12 @@ public class FileUtility {
 
     public void appendFile(String filePath, String text) {
         file = new File(filePath);
-        try {
-            fw = new FileWriter(file, true);
-            bw = new BufferedWriter(fw);
-            pw = new PrintWriter(bw);
+        try (FileWriter fw = new FileWriter(file, true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                PrintWriter pw = new PrintWriter(bw);) {
             pw.println(text);
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                pw.close();
-                bw.close();
-                fw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
