@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 
 public class Main {
     private static String code = "";
+    private static boolean KEEP_RUNNING = true;
 
     public static void main(String[] args) throws IOException, AWTException {
         String credentialsFilePath = "credentials.json";
@@ -45,7 +46,7 @@ public class Main {
                 screenshot = args[i + 1];
             }
         }
-        while (true) {
+        while (KEEP_RUNNING) {
             if (scanUntilImageChanged(fileName, screenshot, x, y, width, height)) {
                 System.out.println(LocalDateTime.now() + " start upload file");
                 fileUtility.writeFile(fileName, code);
