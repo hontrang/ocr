@@ -4,6 +4,7 @@
 name: Build project
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'v1.*.*'
@@ -68,3 +69,8 @@ jobs:
         asset_path: target/ocr-1.0-SNAPSHOT-jar-with-dependencies.jar
         asset_name: ocr-1.0-SNAPSHOT-jar-with-dependencies.jar
         asset_content_type: application/java-archive
+    - name: Discord Webhook Action
+      uses: tsickert/discord-webhook@v5.3.0
+      with:
+        webhook-url: ${{ secrets.WEBHOOK_URL }}
+        content: "Build ${{ github.ref_name }} success!"
